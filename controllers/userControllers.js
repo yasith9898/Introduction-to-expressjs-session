@@ -55,6 +55,7 @@ export function loginUser(req,res){
           firstName: user.firstName,
           lastName: user.lastName,
           type: user.type,
+        
         };
 
         const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: '48h' });
