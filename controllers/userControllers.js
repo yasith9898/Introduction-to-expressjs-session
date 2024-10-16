@@ -1,13 +1,15 @@
-import User from  '../models/user.js'
-import jwt from 'jsonwebtoken'
+import User from '../models/user.js';
+import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import dotenv from 'dotenv'
-dotenv.config()
+import dotenv from 'dotenv';
+dotenv.config();
 
-export function postUsers(req,res){
+export function postUsers(req, res) {
+  const user = req.body;
 
-  const user = req.body
+  
   const password = req.body.password;
+
   const saltRounds = 10;
 
   const passwordHash = bcrypt.hashSync(password, saltRounds);
@@ -16,25 +18,22 @@ export function postUsers(req,res){
 
   user.password = passwordHash;
 
-  const newUser = new User(user)
-  newUser.save().then(
-
-    ()=>{
+  const newUser = new User(user);
+  newUser
+    .save()
+    .then(() => {
       res.json({
-        message : "User created successfully"
-      })
-    }
-  ).catch(
-    ()=>{
+        message: 'User created successfully',
+      });
+    })
+    .catch(() => {
       res.json({
-        message : "User creation failed"
-      })
-    }
-  )
-
+        message: 'User creation failed',
+      });
+    });
 }
 
-export function loginUser(req,res){
+export function loginUser(req, res) {
   const credentials = req.body;
 
   User.findOne({ email: credentials.email }).then((user) => {
@@ -57,7 +56,6 @@ export function loginUser(req,res){
           firstName: user.firstName,
           lastName: user.lastName,
           type: user.type,
-        
         };
 
         const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: '48h' });
@@ -72,7 +70,32 @@ export function loginUser(req,res){
   });
 }
 
+export function isAdminValid(req){
+
+  if(req.user == null){
+    return false
+  }
+  if(req.user.type != "admin"){
+    return false
+  }
+  return true;
+  
+}
+export function isCustomerValid(req){
+
+  if(req.user == null){
+    return false
+  }
+  console.log(req.user)
+  if(req.user.type != "customer"){
+    return false
+  }
+
+  return true;
+  
+}
 
 
-
-
+const email = "kjsdhfkladsf"
+const password = "kljlkslkjlk;kjkl;jsadafklj"
+const name = "sdfads"
